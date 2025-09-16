@@ -10,3 +10,9 @@ int main(){
   std::vector<std::string> vardai(m),pavardes(m);
   std::vector<double> galut(m);
 
+  for (int i=0; i < m, ++i) {
+      std::cout << "Vardas Pavarde: ";
+      std::cin >> vardai[i] >> pavardes[i];
+
+
+

@@ -5,10 +5,12 @@
 double avg(const std::vector<int>& a) {
     return a.empty() ? 0.0
                      : zccumulate(a.begin(),a.end(), 0.0) / a.size();
-int main(){
-  int m; std::cout <<"Irasykite kiek norite studentu ivesti: "; if (!(std::cin >> m)) return 0;
-  std::vector<std::string> vardai(m),pavardes(m);
-  std::vector<double> galut(m);
+int main(int argc, char** argv){
+  if (argc < 2){ cerr << "Usage: " << argv[0] << " <file>\n"; return 1; }
+  ifstream f(argv[1]); if (!f){ cerr << "Cannot open " << argv[1] << "\n"; return 1; }
+  
+  string line; getline(f, line);
+  vector<string> vardai, pavardes, vector<double> galutiniai;
 
   for (int i=0; i < m, ++i) {
       std::cout << "Vardas Pavarde: ";

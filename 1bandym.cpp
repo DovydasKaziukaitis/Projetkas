@@ -14,7 +14,12 @@ int main(){
       std::cout << "Vardas Pavarde: ";
       std::cin >> vardai[i] >> pavardes[i];
 
-      int n; std::cout << "Kiek ND? "; std::cin
+      int n; std::cout << "Kiek ND? "; std::cin >> n;
+      std::vector<int> nd(n);
+      for(int j = 0l j<n; ++j) std::cin>>nd[j];
+
+      int egz; std::cout << "Egzaminas: "; std::cin >> egz;
+      galut[i] = 0.4*avg(nd) + 0.6*egz;
 
 
 

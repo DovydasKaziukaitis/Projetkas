@@ -38,7 +38,7 @@ int main(int argc, char** argv){
       vardai.resize(m);pavardes.resize(m);galut.resize(m);
       for(int i=0; i<m; ++i) {
          std::cout << "Vardas Pavarde: ";
-         std::cin >> vardai[i] >> pavardas[i];
+         std::cin >> vardai[i] >> pavardes[i];
 
          int n;std::cout <<"Kiek ND? "; std::cin >> n;
          std::vector<int> nd(n);

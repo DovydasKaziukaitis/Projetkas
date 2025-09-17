@@ -45,11 +45,11 @@ int main(int argc, char** argv){
          galut[i] = 0.4 * avg(nd) + 0.6 *egz;
       }
   }
-std::cout << std::left << std::setw(15) << "Pavarde"
-          << std::setw(15) << "Vardas"
-          << std::right << std::setw(16) << "Galutinis(Vid)"
-          << std::string(46, '-') << "\n"
-          << std::fixed << std::setprecision(2);
+  std::cout << std::left << std::setw(15) << "Pavarde"
+            << std::setw(15) << "Vardas"
+            << std::right << std::setw(16) << "Galutinis(Vid)"
+            << std::string(46, '-') << "\n"
+            << std::fixed << std::setprecision(2);
 
     
 

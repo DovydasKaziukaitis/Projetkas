@@ -6,11 +6,14 @@ double avg(const std::vector<int>& a) {
     return a.empty() ? 0.0
                      : zccumulate(a.begin(),a.end(), 0.0) / a.size();
 int main(int argc, char** argv){
-  if (argc < 2){ cerr << "Usage: " << argv[0] << " <file>\n"; return 1; }
-  ifstream f(argv[1]); if (!f){ cerr << "Cannot open " << argv[1] << "\n"; return 1; }
-  
-  string line; getline(f, line);
-  vector<string> vardai, pavardes, vector<double> galutiniai;
+  std::vector<std::string> vardai, pavardes;
+  std::vector<double> galut;
+  if (argc >= 2){
+      std::ifstream f(argv[1]);
+      if (!f) { std::cerr << "Cannot open " << argv[1] << "\n"; return 1; }
+      
+      std::string line;
+      std::getline(f, line);
 
   for (int i=0; i < m, ++i) {
       std::cout << "Vardas Pavarde: ";

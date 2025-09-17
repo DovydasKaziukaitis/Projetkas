@@ -4,7 +4,7 @@
 
 double avg(const std::vector<int>& a) {
     return a.empty() ? 0.0
-                     : zccumulate(a.begin(),a.end(), 0.0) / a.size();
+                     : std::accumulate(a.begin(),a.end(), 0.0) / a.size();
 }
 int main(int argc, char** argv){
   std::vector<std::string> vardai, pavardes;
@@ -51,6 +51,10 @@ int main(int argc, char** argv){
             << std::string(46, '-') << "\n"
             << std::fixed << std::setprecision(2);
 
-    
+  for(size_t i=0; i<galut.size(); ++i)
+      std::cout << std::left << std::setw(15) << pavardes[i]
+                << std::setw(15) << vardai[i]
+                << std::right << std::setw(16) << galut[i] << "\n";
+}
 
 

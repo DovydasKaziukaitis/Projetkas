@@ -14,5 +14,7 @@ int main(){
       std::cout << "Vardas Pavarde: ";
       std::cin >> vardai[i] >> pavardes[i];
 
+      int n; std::cout << "Kiek ND? "; std::cin
+
 
 

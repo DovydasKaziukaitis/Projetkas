@@ -1,6 +1,9 @@
 #include <iostream>
 #include <iomanip>
 #include <vector>
+#include <numeric>
+#include <fstream>
+#include <sstream>
 
 double avg(const std::vector<int>& a) {
     return a.empty() ? 0.0

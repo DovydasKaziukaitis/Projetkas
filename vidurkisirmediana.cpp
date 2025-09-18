@@ -147,7 +147,7 @@ int main(int argc, char** argv) {
                 galut[i]    = 0.4 * avg(nd) + 0.6 * egz;
                 galutMed[i] = 0.4 * med(nd) + 0.6 * egz;
             }
-            spausdink(vardai, pavardes, galut, galutMed, mode, 3);
+            spausdink(vardai, pavardes, galut, galutMed, mode);
 
         } else if (mnu == 3) {
             int m; std::cout << "Kiek studentu generuoti? ";
@@ -173,7 +173,7 @@ int main(int argc, char** argv) {
                 galut[i]    = 0.4 * avg(nd) + 0.6 * egz;
                 galutMed[i] = 0.4 * med(nd) + 0.6 * egz;
             }
-            spausdink(vardai, pavardes, galut, galutMed, mode, 3);
+            spausdink(vardai, pavardes, galut, galutMed, mode);
 
         } else {
             std::cout << "Blogas pasirinkimas\n";

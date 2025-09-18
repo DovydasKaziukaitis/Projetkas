@@ -89,13 +89,25 @@ int main(int argc, char** argv){
 
             std::ifstream f(path.c_str());
             if (!f) { std::cerr << "cannot open " << path << "\n"; continue; }
-
+            
+            std::string header; std::getline(f, header);
+            bool pirmaPavarde = false;
+            {
+                std::istringstream h(header);
+                std::string c1, c2; h >> c1 >> c2;
+                if (c1 == "Pavarde" || c1 == "Pavardė" || c1 == "Pavarde:" || c1 == "Pavardė:")
+                    pirmaPavarde = true;
+            }
+            std::vector<stdLLstring> vardai, pavardes;
+            std::vector<double> galut, galutMed;
+          
             std::string line;
-            std::getline(f, line);
             while (std::getline(f, line)) {
                 if (line.empty()) continue;
                 std::istringstream in(line);
-                std::string v, p; if (!(in >> v >> p)) continue;
+                std::string a, b; if(!(in >> a >> b)) continue;
+                std::string v, p;
+                if(pirmaPavarde) { p = a; v = b; } else {v = a; p = b; }
 
                 std::vector<int> marks; int x;
                 while (in >> x) marks.push_back(x);
@@ -106,8 +118,8 @@ int main(int argc, char** argv){
                 galut.push_back(   0.4 * avg(marks) + 0.6 * egz);
                 galutMed.push_back(0.4 * med(marks) + 0.6 * egz);
             }
-            spausdink(vardai, pavardes, galut, galutMed, mode):
-
+            spausdink(vardai, pavardes, galut, galutMed, mode);
+            continue;
       } else if(mnu == 2) {
           int m; std::cout << "Kiek studentu? ";
           if(!(std::cin>>m) || m<= 0) return 0;

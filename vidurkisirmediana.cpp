@@ -58,18 +58,25 @@ int main(int argc, char** argv){
   } else {
       int m; std::cout << "Kiek studentu? ";
       if(!(std::cin>>m) || m<= 0) return 0;
+      std::getline(std::cin, dump);
 
-      vardai.resize(m);pavardes.resize(m);galut.resize(m);
+      vardai.resize(m);pavardes.resize(m);galut.resize(m);galutMed.resize(m);
       for(int i=0; i<m; ++i) {
          std::cout << "Vardas Pavarde: ";
          std::cin >> vardai[i] >> pavardes[i];
+         std::getline(std::cin, dump);
 
-         int n;std::cout <<"Kiek ND? "; std::cin >> n;
-         std::vector<int> nd(n);
-         for(int j=0; j<n; ++j) std::cin >> nd[j];
+         std::cout << "Iveskite visus ND balus vienoje eiluteje ";
+         std::string ndLine; std::getLine(std::cin, ndLine);
+         std::istringstream nds(ndLine);
+         std::vector<int> nd; int v, while(nds >> v) nd.push_back(v);
 
-         int egz; std::cout <<"Egzaminas: "; std::cin >> egz;
+         std::cout << "Egzamino balas: ";
+         int egz; std::cin >> egz;
+         std::getline(std::cin, dump);
+         
          galut[i] = 0.4 * avg(nd) + 0.6 *egz;
+         galutMed[i] = 0.4 * med(nd) + 0.6 *egz;
       }
   }
   std::cout << std::left << std::setw(15) << "Pavarde"

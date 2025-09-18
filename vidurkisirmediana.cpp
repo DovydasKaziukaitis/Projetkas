@@ -109,44 +109,32 @@ int main(int argc, char** argv){
             spausdink(vardai, pavardes, galut, galutMed, mode):
 
       } else if(mnu == 2) {
-      int m; std::cout << "Kiek studentu? ";
-      if(!(std::cin>>m) || m<= 0) return 0;
-      std::getline(std::cin, dump);
+          int m; std::cout << "Kiek studentu? ";
+          if(!(std::cin>>m) || m<= 0) return 0;
+          std::getline(std::cin, dump);
 
-      vardai.resize(m);pavardes.resize(m);galut.resize(m);galutMed.resize(m);
-      for(int i=0; i<m; ++i) {
-         std::cout << "Vardas Pavarde: ";
-         std::cin >> vardai[i] >> pavardes[i];
-         std::getline(std::cin, dump);
+          vardai.resize(m);pavardes.resize(m);galut.resize(m);galutMed.resize(m);
+          for(int i=0; i<m; ++i) {
+             std::cout << "Vardas Pavarde: ";
+             std::cin >> vardai[i] >> pavardes[i];
+             std::getline(std::cin, dump);
 
-         std::cout << "Iveskite visus ND balus vienoje eiluteje ";
-         std::string ndLine; std::getLine(std::cin, ndLine);
-         std::istringstream nds(ndLine);
-         std::vector<int> nd; int v, while(nds >> v) nd.push_back(v);
+             std::cout << "Iveskite visus ND balus vienoje eiluteje ";
+             std::string ndLine; std::getLine(std::cin, ndLine);
+             std::istringstream nds(ndLine);
+             std::vector<int> nd; int v, while(nds >> v) nd.push_back(v);
 
-         std::cout << "Egzamino balas: ";
-         int egz; std::cin >> egz;
-         std::getline(std::cin, dump);
+             std::cout << "Egzamino balas: ";
+             int egz; std::cin >> egz;
+             std::getline(std::cin, dump);
          
-         galut[i] = 0.4 * avg(nd) + 0.6 *egz;
-         galutMed[i] = 0.4 * med(nd) + 0.6 *egz;
+             galut[i] = 0.4 * avg(nd) + 0.6 *egz;
+             galutMed[i] = 0.4 * med(nd) + 0.6 *egz;
       }
-  }
-  std::cout << std::left << std::setw(15) << "Pavarde"
-            << std::setw(15) << "Vardas"
-  if(mode == 1 || mode == 3) std::cout << std::right << std::setw(16) << "Galutinis(Vid)";
-  if(mode == 2 || mode == 3) std::cout << std::right << std::setw(18) << "Galutinis(Med)";
-  std::cout << "\n";
-
-  int bruksniai = (mode == 3) ? 62 : 46;
-  std::cout << std::string(bruksniai, '-')
-            << std::fixed << std::setprecision(2);
-  for(size_t i=0; i<galut.size(); ++i)
-      std::cout << std::left << std::setw(15) << pavardes[i]
-                << std::setw(15) << vardai[i]
-      if(mode == 1 || mode == 3) std::cout << std::right << std::setw(16) << galut[i];
-      if(mode == 2 || mode == 3) std::cout << std::right << std::setw(18) << galutMed[i];
-      std::cout << "\n";
+      spausdink(vardai, pavardes, galut, galutMed, mode);
+  } else if(mnu == 3) {
+          
+  
    }
 }
 

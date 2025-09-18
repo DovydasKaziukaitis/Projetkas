@@ -9,6 +9,25 @@ double avg(const std::vector<int>& a) {
     return a.empty() ? 0.0
                      : std::accumulate(a.begin(),a.end(), 0.0) / a.size();
 }
+
+static void sort(std::vector<int>& a) {
+    for (size_t i = 1; i < a.size(); ++i) {
+        int key = a[i];
+        size_t j = i;
+        while (j > 0 && a[j - 1] > key) {
+            a[j] = a[j - 1];
+            --j;
+        }
+        a[j] = key;
+    }
+}
+double med(std::vector<int> a) {
+    if(a.empty()) return 0.0;
+    sort(a);
+    size_t n = a.size();
+    return(n%2) ? a[n/2] : (a[n/2 -1]+a[n/2] / 2.0;
+}
+
 int main(int argc, char** argv){
   std::vector<std::string> vardai, pavardes;
   std::vector<double> galut;

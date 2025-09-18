@@ -29,8 +29,12 @@ double med(std::vector<int> a) {
 }
 
 int main(int argc, char** argv){
+  int mode = 3;
+  std::cout << "Pasirinkite rezultata: 1-Vid. 2-Med. 3-Abu = "
+  if(!(std::cin >> mode) || mode < 1 || mode > 3) mode = 3;
+  std::string dump; std::getline(std::cin, dump);
   std::vector<std::string> vardai, pavardes;
-  std::vector<double> galut;
+  std::vector<double> galut, galutMed;
   if (argc >= 2){
       std::ifstream f(argv[1]);
       if (!f) { std::cerr << "Cannot open " << argv[1] << "\n"; return 1; }

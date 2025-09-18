@@ -36,7 +36,7 @@ static void spausdink(const std::vector<std::string>& vardai,
     std::cout << std::left << std::setw(15) << "Pavarde"
               << std::setw(15) << "Vardas";
     if (mode == 1 || mode == 3) std::cout << std::right << std::setw(16) << "Galutinis(Vid)";
-    if (mode == 2 || mode == 3) std::cout << std::right << std::setw(18) << "Galutinis(Med)";
+    if (mode == 2 || mode == 3) std::cout << std::right << std::setw(16) << "Galutinis(Med)";
     std::cout << "\n";
 
     int bruksniai = (mode == 3) ? 62 : 46;
@@ -47,7 +47,7 @@ static void spausdink(const std::vector<std::string>& vardai,
         std::cout << std::left << std::setw(15) << pavardes[i]
                   << std::setw(15) << vardai[i];
         if (mode == 1 || mode == 3) std::cout << std::right << std::setw(16) << galVid[i];
-        if (mode == 2 || mode == 3) std::cout << std::right << std::setw(18) << galMed[i];
+        if (mode == 2 || mode == 3) std::cout << std::right << std::setw(16) << galMed[i];
         std::cout << "\n";
     }
 }
@@ -120,7 +120,7 @@ int main(int argc, char** argv) {
                 galut.push_back(   0.4 * avg(marks) + 0.6 * egz);
                 galutMed.push_back(0.4 * med(marks) + 0.6 * egz);
             }
-            spausdink(vardai, pavardes, galut, galutMed, mode);
+            spausdink(vardai, pavardes, galut, galutMed, mode, 3);
             continue;
 
         } else if (mnu == 2) {
@@ -147,7 +147,7 @@ int main(int argc, char** argv) {
                 galut[i]    = 0.4 * avg(nd) + 0.6 * egz;
                 galutMed[i] = 0.4 * med(nd) + 0.6 * egz;
             }
-            spausdink(vardai, pavardes, galut, galutMed, mode);
+            spausdink(vardai, pavardes, galut, galutMed, mode, 3);
 
         } else if (mnu == 3) {
             int m; std::cout << "Kiek studentu generuoti? ";
@@ -173,7 +173,7 @@ int main(int argc, char** argv) {
                 galut[i]    = 0.4 * avg(nd) + 0.6 * egz;
                 galutMed[i] = 0.4 * med(nd) + 0.6 * egz;
             }
-            spausdink(vardai, pavardes, galut, galutMed, mode);
+            spausdink(vardai, pavardes, galut, galutMed, mode, 3);
 
         } else {
             std::cout << "Blogas pasirinkimas\n";

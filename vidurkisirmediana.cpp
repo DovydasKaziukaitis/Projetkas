@@ -57,8 +57,17 @@ int main(int argc, char** argv){
   std::cout << "Pasirinkite rezultata: 1-Vid. 2-Med. 3-Abu = "
   if(!(std::cin >> mode) || mode < 1 || mode > 3) mode = 3;
   std::string dump; std::getline(std::cin, dump);
-  std::vector<std::string> vardai, pavardes;
-  std::vector<double> galut, galutMed;
+    
+  std::srand((unsigned)std::time(nullptr));
+  while (true) {
+          std::cout << "\n=== MENIU ===\n"
+                    << "1) Skaityti is failo\n"
+                    << "2) Interaktyvus ivedimas\n"
+                    << "3) Generuoti atsitiktinai\n"
+                    << "4) Keisti isvedimo rezima (dabar: "
+                    << (mode==1?"Vid":mode==2?"Med":"Abu") << ")\n"
+                    << "0) Baigti\n"
+                    << "Pasirinkite: ";
   if (argc >= 2){
       std::ifstream f(argv[1]);
       if (!f) { std::cerr << "Cannot open " << argv[1] << "\n"; return 1; }

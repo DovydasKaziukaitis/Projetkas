@@ -120,7 +120,7 @@ int main(int argc, char** argv) {
                 galut.push_back(   0.4 * avg(marks) + 0.6 * egz);
                 galutMed.push_back(0.4 * med(marks) + 0.6 * egz);
             }
-            spausdink(vardai, pavardes, galut, galutMed, mode, 3);
+            spausdink(vardai, pavardes, galut, galutMed, 3);
             continue;
 
         } else if (mnu == 2) {

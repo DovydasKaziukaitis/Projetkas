@@ -53,6 +53,7 @@ int main(int argc, char** argv){
           int egz = marks.back(); marks.pop_back();
           vardai.push_back(v); pavardes.push_back(p);
           galut.push_back(0.4 * avg(marks) + 0.6 * egz);
+          galutMed.push_back(0.4 * med(marks) + 0.6*egz);
       }     
   } else {
       int m; std::cout << "Kiek studentu? ";

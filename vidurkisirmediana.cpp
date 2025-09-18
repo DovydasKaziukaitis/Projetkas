@@ -133,8 +133,31 @@ int main(int argc, char** argv){
       }
       spausdink(vardai, pavardes, galut, galutMed, mode);
   } else if(mnu == 3) {
-          
-  
+      int m; std::cout << "Kiek studentu generuoti? ";
+      if(!(std::cin >> m) || m<= 0) {std::getline(std::cin, dump); continue; }
+
+      std::cout <<"Kiek ND kiekvienam?: ";
+      int n; if(!(std::cin >> n)) {std::getline(std::cin, dump); continue; }
+      std::getline(std::cin, dump);
+      vardai.resize(m); pavardes.resize(m);
+      galut.resize(m);  galutMed.resize(m);
+      for(int i =0, i < m;++i) {
+          vardai[i]   = "Vardas" + std::to_string(i+1);
+          pavardes[i] = "Pavarde" + std::to_string(i+1);
+
+          int kiekND = n;
+          if (kiekND == 0) kiekND = 5 + std::rand() % 8;
+          std::vector<int> nd(kiekND);
+          for (int j = 0; j < kiekND; ++j) nd[j] = 1 + std::rand() % 10;
+          int egz = 1 + std::rand() % 10;
+
+          galut[i]    = 0.4 * avg(nd) + 0.6 * egz;
+          galutMed[i] = 0.4 * med(nd) + 0.6 * egz;
+      }
+      spausdink(vardai, pavardes, galut, galutMed, mode);
+   } else {
+       std::cout << "Blogas pasirinkimas";
    }
+   return 0;
 }
 

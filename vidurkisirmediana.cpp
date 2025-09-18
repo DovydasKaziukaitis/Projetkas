@@ -4,6 +4,8 @@
 #include <numeric>
 #include <fstream>
 #include <sstream>
+#include <cstdlib>
+#include <ctime>
 
 double avg(const std::vector<int>& a) {
     return a.empty() ? 0.0
@@ -14,10 +16,7 @@ static void sort(std::vector<int>& a) {
     for (size_t i = 1; i < a.size(); ++i) {
         int key = a[i];
         size_t j = i;
-        while (j > 0 && a[j - 1] > key) {
-            a[j] = a[j - 1];
-            --j;
-        }
+        while (j > 0 && a[j - 1] > key) {a[j] = a[j-1]; --j; }
         a[j] = key;
     }
 }
@@ -28,6 +27,18 @@ double med(std::vector<int> a) {
     return(n%2) ? a[n/2] : (a[n/2 -1]+a[n/2] / 2.0;
 }
 
+static void spausdink(const std::vector<std::string>& vardai,
+                      const std::vector<std::string>& pavardes,
+                      const std::vector<double>& galVid,
+                      const std::vector<double>& galMed,
+                      int mode) {
+    std::cout << std::left << std::setw(15) << "Pavarde"
+              << std::setw(15) << "Vardas";
+    if(mode == 1 || mode == 3) std::cout << std:::right << std::setw(16) << "Galutinis(Vid)";
+    if(mode == 2 || mode == 3) std::cout << std::right << std::setw(18) << "Galutinis(Med)";
+    std::cout << "\n";
+    
+    
 int main(int argc, char** argv){
   int mode = 3;
   std::cout << "Pasirinkite rezultata: 1-Vid. 2-Med. 3-Abu = "

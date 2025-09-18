@@ -37,6 +37,19 @@ static void spausdink(const std::vector<std::string>& vardai,
     if(mode == 1 || mode == 3) std::cout << std:::right << std::setw(16) << "Galutinis(Vid)";
     if(mode == 2 || mode == 3) std::cout << std::right << std::setw(18) << "Galutinis(Med)";
     std::cout << "\n";
+
+    int bruksniai = (mode == 3) ? 62 : 46;
+    std::cout << std::string(bruksniai, '-') << "\n"
+              << std::fixed << std::setprecision(2);
+
+    for(size_t i = 0; i < vardai.size(); ++i) {
+        std::cout << std::left << std::setw(15) << pavardes[i]
+                  << std::setw(15) << vardai[i];
+        if(mode == 1 || mode == 3) std::cout << std::right << std::setw(16) << galVid[i];
+        if(mode == 2 || mode == 3) std::cout << std::right << std::setw(18) << galMed[i];
+        std::cout << "\n";
+    }
+}
     
     
 int main(int argc, char** argv){

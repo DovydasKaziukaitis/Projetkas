@@ -1,85 +1,126 @@
 #include <iostream>
 #include <string>
-#include <chrono>
-#include <iomanip>
+#include <sstream>
+#include <numeric>
 #include <algorithm>
 #include "student.h"
 #include "io.h"
 #include "utils.h"
 
-static void benchmark_file(const std::string& path, Mode m) {
+#include <chrono>
+#include <iomanip>
+
+static void spartos_testas(const std::string& path, Mode m) {
     using clock = std::chrono::high_resolution_clock;
     auto now = [] { return clock::now(); };
-    auto ms  = [](auto d) {
+    auto ms = [](auto d) {
         using namespace std::chrono;
-        return duration_cast<microseconds>(d).count() / 1000.0;
+        return duration_cast<milliseconds>(d).count() / 1000.0;
     };
 
     auto t_all0 = now();
 
     auto t0 = now();
-    auto S = read_students(path);
+    auto S = skaityti_studentus(path);
     auto t_read = now() - t0;
 
     t0 = now();
-    std::sort(S.begin(), S.end(), [](const Student& a, const Student& b){
+    std::sort(S.begin(), S.end(), [](const Student& a, const Student& b) {
         if (a.pav != b.pav) return a.pav < b.pav;
         return a.var < b.var;
     });
     auto t_sort = now() - t0;
-
     t0 = now();
-    std::vector<Student> varg, kiet;
-    varg.reserve(S.size());
-    kiet.reserve(S.size());
-    for (auto &st : S) {
-        double v = (m == Mode::Vid ? st.galVid : st.galMed);
-        (v < 5.0 ? varg : kiet).push_back(std::move(st));
-    }
-    std::vector<Student>().swap(S);
-    auto t_split = now() - t0;
-
-    t0 = now();
-    write_group("vargsiukai.txt", varg, m);
-    auto t_w1 = now() - t0;
-
-    t0 = now();
-    write_group("kietiakiai.txt", kiet, m);
-    auto t_w2 = now() - t0;
+    padalinti_ir_irasyti(S, m);
+    auto t_split_write = now() - t0;
 
     auto t_all = now() - t_all0;
 
     std::cout << "Vector\n";
     std::cout << "Failas uzdarytas\n";
-    std::cout << "Failo is " << (varg.size()+kiet.size())
-              << " irasu nuskaitymo laikas: " << std::fixed << std::setprecision(6) << ms(t_read) << "\n";
-    std::cout << (varg.size()+kiet.size()) << " irasu rusiavimo didejimo tvarka laikas, su sort funkcija: "
-              << ms(t_sort) << "\n";
-    std::cout << (varg.size()+kiet.size()) << " irasu dalijimo i dvi grupes laikas, panaikinant pradini Vektoriu: "
-              << ms(t_split) << "\n";
-    std::cout << (varg.size()+kiet.size()) << " irasu isvedimo i pirma faila laikas: "
-              << ms(t_w1) << "\n";
-    std::cout << (varg.size()+kiet.size()) << " irasu isvedimo i antra faila laikas: "
-              << ms(t_w2) << "\n\n";
-    std::cout << (varg.size()+kiet.size()) << " irasu testo laikas: " << ms(t_all) << "\n\n";
-    std::cout << "Press Enter to continue . . .";
-    std::string _;
-    std::getline(std::cin, _);
+    std::cout << "Failo is " << S.size()
+              << " irasu nuskaitymo laikas: "
+              << std::fixed << std::setprecision(6) << ms(t_read) << " ms\n";
+
+    std::cout << S.size()
+              << " irasu rusiavimo didejimo tvarka laikas, su sort funkcija: "
+              << ms(t_sort) << " ms\n";
+
+    std::cout << S.size()
+              << " irasu dalijimo i dvi grupes laikas, panaikinant pradni vektoriu: "
+              << ms(t_split_write) << " ms\n";
+
+    std::cout << S.size()
+              << " irasu testo laikas: "
+              << ms(t_all) << " ms\n";
+
+    std::cout << "Spausk enter kad testi";
+    std::string tmp;
+    std::getline(std::cin, tmp);
+}
+
+static double mediana(std::vector<int> v) {
+    if (v.empty()) return 0.0;
+    std::sort(v.begin(), v.end());
+    size_t n = v.size();
+    if (n % 2 == 1) return v[n/2];
+    return (v[n/2 - 1] + v[n/2]) / 2.0;
+}
+
+static std::vector<Student> interaktyvus_ivedimas() {
+    int m;
+    std::cout << "Kiek studentu? ";
+    if (!(std::cin >> m) || m <= 0) return {};
+    std::string dump;
+    std::getline(std::cin, dump);
+
+    std::vector<Student> s;
+    s.reserve(m);
+
+    for (int i = 0; i < m; ++i) {
+        Student st;
+
+        std::cout << "Vardas Pavarde: ";
+        std::cin >> st.var >> st.pav;
+        std::getline(std::cin, dump);
+
+        std::cout << "Iveskite visus ND balus vienoje eiluteje: ";
+        std::string ndLine;
+        std::getline(std::cin, ndLine);
+        std::istringstream nds(ndLine);
+        int v;
+        while (nds >> v) st.nd.push_back(v);
+
+        std::cout << "Egzamino balas: ";
+        std::cin >> st.egz;
+        std::getline(std::cin, dump);
+
+        double avg = st.nd.empty()
+            ? 0.0
+            : std::accumulate(st.nd.begin(), st.nd.end(), 0.0) / st.nd.size();
+        double med = mediana(st.nd);
+
+        st.galVid = 0.4 * avg + 0.6 * st.egz;
+        st.galMed = 0.4 * med + 0.6 * st.egz;
+
+        s.push_back(std::move(st));
+    }
+    return s;
 }
 
 int main(int argc, char** argv) {
-    Mode mode = Mode::Vid;
     std::string dump;
+    std::vector<Student> paskutiniai;
 
     while (true) {
         std::cout << "\n=== MENIU ===\n"
-                  << "1) Skaityti is failo\n"
-                  << "2) Interaktyvus demo (atsitiktiniai 5)\n"
-                  << "3) Generuoti ir isvesti i vargsiukai/kietiakiai (pagal esama rezima)\n"
-                  << "4) Keisti isvedimo rezima (dabar: " << (mode==Mode::Vid ? "Vid" : "Med") << ")\n"
-                  << "5) Spartos testas (benchmark)\n"
-                  << "0) Baigti\n"
-                  << "Pasirinkite: ";
+            << "1) Nuskaityti studentu pazymiu faila (rodyti Vid/Med/Abu)\n"
+            << "2) Interaktyvus ivedimas\n"
+            << "3) Sugeneruoti studentu pazymiu faila\n"
+            << "4) Padalinti i vargsiukus/kietiakius (galutinis <= 5)\n"
+            << "5) Spartos testas\n"
+            << "0) Baigti\n"
+            << "Pasirinkite: ";
 
         int mnu;
         if (!(std::cin >> mnu)) return 0;
@@ -87,50 +128,111 @@ int main(int argc, char** argv) {
 
         if (mnu == 0) break;
 
-        if (mnu == 4) {
-            std::cout << "Naujas rezimas 1-Vid 2-Med: ";
-            int x; if (!(std::cin >> x)) x = 1;
-            std::getline(std::cin, dump);
-            mode = (x == 2 ? Mode::Med : Mode::Vid);
-            continue;
-        }
-
         if (mnu == 1) {
             std::string path;
             if (argc >= 2) path = argv[1];
-            else { std::cout << "Failo kelias: "; std::getline(std::cin, path); }
-            auto S = read_students(path);
-            std::cerr << "Uzkrauta irasu: " << S.size() << "\n";
-            print_table(S, mode);
-            split_and_write(S, mode);
+            else {
+                std::cout << "Failo kelias: ";
+                std::getline(std::cin, path);
+            }
+
+            paskutiniai = skaityti_studentus(path);
+            std::cerr << "Uzkrauta irasu: " << paskutiniai.size() << "\n";
+
+            std::cout << "Ka rodyti?\n"
+                      << "1) Galutinis(Vid)\n"
+                      << "2) Galutinis(Med)\n"
+                      << "3) Abu\n"
+                      << "Pasirinkite: ";
+            int show;
+            if (!(std::cin >> show)) show = 1;
+            std::getline(std::cin, dump);
+
+            if (show == 2) spausdinti_lentele(paskutiniai, Mode::Med);
+            else if (show == 3) spausdinti_lentele_abus(paskutiniai);
+            else spausdinti_lentele(paskutiniai, Mode::Vid);
+
             continue;
         }
 
         if (mnu == 2) {
-            auto S = generate_students(5);
-            print_table(S, mode);
+            paskutiniai = interaktyvus_ivedimas();
+            std::cerr << "Ivedete irasu: " << paskutiniai.size() << "\n";
+
+            std::cout << "Ka rodyti?\n"
+                      << "1) Galutinis(Vid)\n"
+                      << "2) Galutinis(Med)\n"
+                      << "3) Abu\n"
+                      << "Pasirinkite: ";
+            int show;
+            if (!(std::cin >> show)) show = 1;
+            std::getline(std::cin, dump);
+
+            if (show == 2) spausdinti_lentele(paskutiniai, Mode::Med);
+            else if (show == 3) spausdinti_lentele_abus(paskutiniai);
+            else spausdinti_lentele(paskutiniai, Mode::Vid);
+
             continue;
         }
 
         if (mnu == 3) {
-            int n; std::cout << "Kiek irasu generuoti? ";
+            int n;
+            std::cout << "Kiek irasu generuoti? ";
             if (!(std::cin >> n) || n <= 0) { std::getline(std::cin, dump); continue; }
             std::getline(std::cin, dump);
-            auto S = generate_students(n);
-            split_and_write(S, mode);
-            std::cout << "Irasyta i vargsiukai.txt ir kietiakiai.txt\n";
+
+            paskutiniai = generuoti_studentus(n);
+            std::string fn = "studentai" + std::to_string(n) + ".txt";
+            irasyti_pilna_faila(fn, paskutiniai);
+
+            std::cout << "Sugeneruotas failas: " << fn << "\n";
             continue;
         }
 
+        if (mnu == 4) {
+            if (paskutiniai.empty()) {
+                std::cout << "Nera duomenu. Pirma nuskaitykite faila arba iveskite interaktyviai.\n";
+                continue;
+            }
+
+            std::cout << "Pagal ka dalinti?\n"
+                      << "1) Galutinis(Vid)\n"
+                      << "2) Galutinis(Med)\n"
+                      << "Pasirinkite: ";
+            int x;
+            if (!(std::cin >> x)) x = 1;
+            std::getline(std::cin, dump);
+
+            Mode mode = (x == 2 ? Mode::Med : Mode::Vid);
+            padalinti_ir_irasyti(paskutiniai, mode);
+
+            std::cout << "Padalinta i vargsiukai.txt ir kietiakiai.txt (rezimas: "
+                      << (mode == Mode::Vid ? "Vid" : "Med") << ")\n";
+            continue;
+        }
         if (mnu == 5) {
             std::string path;
             if (argc >= 2) path = argv[1];
-            else { std::cout << "Failo kelias: "; std::getline(std::cin, path); }
-            benchmark_file(path, mode);
+            else {
+                std::cout << "Failo kelias: ";
+                std::getline(std::cin, path);
+            }
+
+            std::cout << "Spartos testui naudoti:\n"
+                    << "1) Galutinis(Vid)\n"
+                    << "2) Galutinis(Med)\n"
+                    << "Pasirinkite: ";
+            int x;
+            if (!(std::cin >> x)) x = 1;
+            std::getline(std::cin, dump);
+
+            Mode mode = (x == 2 ? Mode::Med : Mode::Vid);
+            spartos_testas(path, mode);
             continue;
         }
 
-        std::cout << "Blogas pasirinkimas\n";
+
+        std::cout << "Blogas pasirinkimas.\n";
     }
 
     return 0;

@@ -1,9 +1,9 @@
 #pragma once
-#include <string>
 #include <vector>
+#include <string>
 #include "student.h"
 
-std::vector<Student> read_students(const std::string& path);
-void print_table(const std::vector<Student>& s, Mode m);
-void split_and_write(const std::vector<Student>& s, Mode m);
-
+std::vector<Student> skaityti_studentus(const std::string& path);
+void spausdinti_lentele(const std::vector<Student>& s, Mode m);
+void spausdinti_lentele_abus(const std::vector<Student>& s);
+void padalinti_ir_irasyti(std::vector<Student>& s, Mode m);

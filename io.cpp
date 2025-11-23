@@ -1,11 +1,12 @@
 #include "io.h"
-#include "student.h"
 #include "utils.h"
 #include <fstream>
 #include <sstream>
 #include <algorithm>
 #include <iomanip>
+#include <numeric>
 #include <cctype>
+#include <cstdlib>
 #include <iostream>
 
 static void trim(std::string& s) {
@@ -16,82 +17,121 @@ static void trim(std::string& s) {
     else s = s.substr(a, b - a + 1);
 }
 
-static bool all_digits(const std::string& t) {
-    if (t.empty()) return false;
-    for (unsigned char ch : t) if (!std::isdigit(ch)) return false;
-    return true;
-}
-
-std::vector<Student> read_students(const std::string& path) {
+std::vector<Student> skaityti_studentus(const std::string& path) {
     std::ifstream f(path);
     if (!f) {
         std::cerr << "Nepavyko atidaryti: " << path << "\n";
         return {};
     }
+
     std::vector<Student> out;
     std::string line;
+    bool header_passed = false;
+
+    auto parse_int = [&](const std::string& s, int& outv)->bool {
+        char* e = nullptr;
+        long v = std::strtol(s.c_str(), &e, 10);
+        if (e && *e == '\0') { outv = (int)v; return true; }
+        return false;
+    };
+
+    auto mediana = [](std::vector<int> v)->double {
+        if (v.empty()) return 0.0;
+        std::sort(v.begin(), v.end());
+        size_t n = v.size();
+        if (n % 2 == 1) return v[n/2];
+        return (v[n/2-1] + v[n/2]) / 2.0;
+    };
+
     while (std::getline(f, line)) {
         trim(line);
-        if (line.empty() || line[0] == '-') continue;
-        for (char& c : line) if (c == ',') c = '.';
+        if (line.empty()) continue;
+
+        if (!header_passed) {
+            header_passed = true;
+            continue;
+        }
+
         std::istringstream in(line);
         std::vector<std::string> tok;
         std::string t;
         while (in >> t) tok.push_back(t);
         if (tok.size() < 3) continue;
-        auto parse_d = [](const std::string& s, double& v)->bool {
-            char* e = nullptr;
-            v = std::strtod(s.c_str(), &e);
-            return e && *e == '\0';
-        };
-        double gVid = 0, gMed = 0;
-        bool have2 = tok.size() >= 4 && parse_d(tok[tok.size()-1], gMed)
-                                   && parse_d(tok[tok.size()-2], gVid);
-        bool have1 = !have2 && parse_d(tok.back(), gVid);
-        std::string pav, var;
-        if (have2) {
-            size_t n = tok.size();
-            if (n >= 5 && all_digits(tok[0])) { pav = tok[1]; var = tok[2]; }
-            else { pav = tok[n-3]; var = tok[n-2]; }
-        } else if (have1) {
-            size_t n = tok.size();
-            if (n >= 4 && all_digits(tok[0])) { pav = tok[1]; var = tok[2]; }
-            else { pav = tok[n-3]; var = tok[n-2]; }
-            gMed = gVid;
-        } else {
-            continue;
+
+        Student st;
+        st.var = tok[0];
+        st.pav = tok[1];
+
+        std::vector<int> nums;
+        for (size_t i = 2; i < tok.size(); ++i) {
+            int x;
+            if (parse_int(tok[i], x)) nums.push_back(x);
         }
-        out.push_back(Student{pav, var, gVid, gMed});
+        if (nums.size() < 2) continue;
+
+        st.egz = nums.back();
+        nums.pop_back();
+        st.nd = nums;
+
+        double avg = std::accumulate(st.nd.begin(), st.nd.end(), 0.0) / st.nd.size();
+        double med = mediana(st.nd);
+
+        st.galVid = 0.4 * avg + 0.6 * st.egz;
+        st.galMed = 0.4 * med + 0.6 * st.egz;
+
+        out.push_back(std::move(st));
     }
+
     return out;
 }
 
-void print_table(const std::vector<Student>& s, Mode m) {
+void spausdinti_lentele(const std::vector<Student>& s, Mode m) {
     std::cout << std::left << std::setw(12) << "Pavarde"
-              << std::setw(12) << "Vardas";
+              << std::left << std::setw(12) << "Vardas";
     if (m == Mode::Vid) std::cout << std::right << std::setw(14) << "Galutinis(Vid)";
-    else                std::cout << std::right << std::setw(14) << "Galutinis(Med)";
+    else               std::cout << std::right << std::setw(14) << "Galutinis(Med)";
     std::cout << "\n" << std::string(40, '-') << "\n";
+
     std::cout << std::fixed << std::setprecision(2);
     int shown = 0;
     for (const auto& st : s) {
         std::cout << std::left << std::setw(12) << st.pav
-                  << std::setw(12) << st.var
+                  << std::left << std::setw(12) << st.var
                   << std::right << std::setw(14)
                   << (m == Mode::Vid ? st.galVid : st.galMed)
                   << "\n";
-        if (++shown == 5) break;
     }
 }
 
-void split_and_write(const std::vector<Student>& s, Mode m) {
+void spausdinti_lentele_abus(const std::vector<Student>& s) {
+    std::cout << std::left << std::setw(12) << "Pavarde"
+              << std::left << std::setw(12) << "Vardas"
+              << std::right << std::setw(14) << "Galutinis(Vid)"
+              << std::right << std::setw(14) << "Galutinis(Med)"
+              << "\n" << std::string(52, '-') << "\n";
+
+    std::cout << std::fixed << std::setprecision(2);
+    int shown = 0;
+    for (const auto& st : s) {
+        std::cout << std::left << std::setw(12) << st.pav
+                  << std::left << std::setw(12) << st.var
+                  << std::right << std::setw(14) << st.galVid
+                  << std::right << std::setw(14) << st.galMed
+                  << "\n";
+    }
+}
+
+void padalinti_ir_irasyti(std::vector<Student>& s, Mode m) {
     std::vector<Student> varg, kiet;
     varg.reserve(s.size());
     kiet.reserve(s.size());
-    for (const auto& st : s) {
+
+    for (auto &st : s) {
         double v = (m == Mode::Vid ? st.galVid : st.galMed);
-        (v < 5.0 ? varg : kiet).push_back(st);
+        if (v <= 5.0) varg.push_back(std::move(st));
+        else          kiet.push_back(std::move(st));
     }
-    write_group("vargsiukai.txt", varg, m);
-    write_group("kietiakiai.txt", kiet, m);
+
+    rasyti_grupe("vargsiukai.txt", varg, m);
+    rasyti_grupe("kietiakiai.txt", kiet, m);
 }

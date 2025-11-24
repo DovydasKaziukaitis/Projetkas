@@ -86,8 +86,8 @@ std::vector<Student> skaityti_studentus(const std::string& path) {
 }
 
 void spausdinti_lentele(const std::vector<Student>& s, Mode m) {
-    std::cout << std::left << std::setw(12) << "Pavarde"
-              << std::left << std::setw(12) << "Vardas";
+    std::cout << std::left << std::setw(20) << "Pavarde"
+              << std::left << std::setw(20) << "Vardas";
     if (m == Mode::Vid) std::cout << std::right << std::setw(14) << "Galutinis(Vid)";
     else               std::cout << std::right << std::setw(14) << "Galutinis(Med)";
     std::cout << "\n" << std::string(40, '-') << "\n";
@@ -95,8 +95,8 @@ void spausdinti_lentele(const std::vector<Student>& s, Mode m) {
     std::cout << std::fixed << std::setprecision(2);
     int shown = 0;
     for (const auto& st : s) {
-        std::cout << std::left << std::setw(12) << st.pav
-                  << std::left << std::setw(12) << st.var
+        std::cout << std::left << std::setw(20) << st.pav
+                  << std::left << std::setw(20) << st.var
                   << std::right << std::setw(14)
                   << (m == Mode::Vid ? st.galVid : st.galMed)
                   << "\n";
@@ -104,8 +104,8 @@ void spausdinti_lentele(const std::vector<Student>& s, Mode m) {
 }
 
 void spausdinti_lentele_abus(const std::vector<Student>& s) {
-    std::cout << std::left << std::setw(12) << "Pavarde"
-              << std::left << std::setw(12) << "Vardas"
+    std::cout << std::left << std::setw(20) << "Pavarde"
+              << std::left << std::setw(20) << "Vardas"
               << std::right << std::setw(14) << "Galutinis(Vid)"
               << std::right << std::setw(14) << "Galutinis(Med)"
               << "\n" << std::string(52, '-') << "\n";
@@ -113,8 +113,8 @@ void spausdinti_lentele_abus(const std::vector<Student>& s) {
     std::cout << std::fixed << std::setprecision(2);
     int shown = 0;
     for (const auto& st : s) {
-        std::cout << std::left << std::setw(12) << st.pav
-                  << std::left << std::setw(12) << st.var
+        std::cout << std::left << std::setw(20) << st.pav
+                  << std::left << std::setw(20) << st.var
                   << std::right << std::setw(14) << st.galVid
                   << std::right << std::setw(14) << st.galMed
                   << "\n";
@@ -128,10 +128,64 @@ void padalinti_ir_irasyti(std::vector<Student>& s, Mode m) {
 
     for (auto &st : s) {
         double v = (m == Mode::Vid ? st.galVid : st.galMed);
-        if (v <= 5.0) varg.push_back(std::move(st));
-        else          kiet.push_back(std::move(st));
+        if (v < 5.0) varg.push_back(st);
+        else          kiet.push_back(st);
     }
 
     rasyti_grupe("vargsiukai.txt", varg, m);
     rasyti_grupe("kietiakiai.txt", kiet, m);
+}
+
+std::vector<Student> skaityti_rezultatus(const std::string& path) {
+    std::ifstream f(path);
+    if (!f) {
+        std::cerr << "Nepavyko atidaryti: " << path << "\n";
+        return {};
+    }
+
+    std::vector<Student> out;
+    std::string line;
+
+    auto parse_double = [&](const std::string& s, double& outv)->bool {
+        char* e = nullptr;
+        double v = std::strtod(s.c_str(), &e);
+        if (e && *e == '\0') { outv = v; return true; }
+        return false;
+    };
+
+    while (std::getline(f, line)) {
+        trim(line);
+        if (line.empty()) continue;
+
+        std::istringstream in(line);
+        std::vector<std::string> tok;
+        std::string t;
+        while (in >> t) tok.push_back(t);
+
+        if (tok.size() < 3) continue;
+
+        Student st;
+        st.pav = tok[0];
+        st.var = tok[1];
+
+        std::vector<double> nums;
+        for (size_t i = 2; i < tok.size(); ++i) {
+            double x;
+            if (parse_double(tok[i], x)) nums.push_back(x);
+        }
+
+        if (nums.size() == 2) {
+            st.galVid = nums[0];
+            st.galMed = nums[1];
+        } else if (nums.size() == 1) {
+            st.galVid = nums[0];
+            st.galMed = nums[0];
+        } else {
+            continue;
+        }
+
+        out.push_back(std::move(st));
+    }
+
+    return out;
 }

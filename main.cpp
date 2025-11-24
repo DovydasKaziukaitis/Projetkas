@@ -190,26 +190,35 @@ int main(int argc, char** argv) {
         }
 
         if (mnu == 4) {
-            if (paskutiniai.empty()) {
-                std::cout << "Nera duomenu. Pirma nuskaitykite faila arba iveskite interaktyviai.\n";
+            std::string path;
+            std::cout << "Iveskite failo kelia padalinimui: ";
+            std::getline(std::cin, path);
+
+            auto s = skaityti_rezultatus(path);
+            if (s.empty()) {
+                std::cout << "Failas tuscias arba nepavyko nuskaityti.\n";
                 continue;
             }
 
             std::cout << "Pagal ka dalinti?\n"
-                      << "1) Galutinis(Vid)\n"
-                      << "2) Galutinis(Med)\n"
-                      << "Pasirinkite: ";
+                    << "1) Galutinis(Vid)\n"
+                    << "2) Galutinis(Med)\n"
+                    << "Pasirinkite: ";
+
             int x;
             if (!(std::cin >> x)) x = 1;
             std::getline(std::cin, dump);
 
             Mode mode = (x == 2 ? Mode::Med : Mode::Vid);
-            padalinti_ir_irasyti(paskutiniai, mode);
 
-            std::cout << "Padalinta i vargsiukai.txt ir kietiakiai.txt (rezimas: "
-                      << (mode == Mode::Vid ? "Vid" : "Med") << ")\n";
+            padalinti_ir_irasyti(s, mode);
+
+            std::cout << "Padalinta i vargsiukai.txt ir kietiakiai.txt (is failo: "
+                    << path << ", rezimas: "
+                    << (mode == Mode::Vid ? "Galutinis(Vid)" : "Galutinis(Med)")
+                    << ")\n";
             continue;
-        }
+    }
         if (mnu == 5) {
             std::string path;
             if (argc >= 2) path = argv[1];

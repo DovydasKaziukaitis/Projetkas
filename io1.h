@@ -1,30 +1,13 @@
 #pragma once
-#include <string>
 #include <vector>
+#include <string>
+#include "student3.h"
 #include <list>
-#include "student1.h"
 
-std::vector<Student> studentuSkaitymas(const std::string& path);
-void lentelesSpausdinimas(const std::vector<Student>& s, Mode m);
-void lentelesSpausdinimas(const std::list<Student>&    s, Mode m);
-
-void grupesIrasymas(const std::string& path, const std::vector<Student>& s, Mode m);
-void grupesIrasymas(const std::string& path, const std::list<Student>& s, Mode m);
-
-enum class Strategija { S1 = 1, S2 = 2, S3 = 3 };
-void padalinimasStrategija1(std::vector<Student> const& s, Mode m,
-                            std::vector<Student>& varg, std::vector<Student>& kiet);
-void padalinimasStrategija1(std::list<Student> const& s, Mode m,
-                            std::list<Student>& varg, std::list<Student>& kiet);
-
-void padalinimasStrategija2(std::vector<Student>& s, Mode m,
-                            std::vector<Student>& varg, std::vector<Student>& kiet);
-void padalinimasStrategija2(std::list<Student>& s, Mode m,
-                            std::list<Student>& varg, std::list<Student>& kiet);
-
-void padalinimasStrategija3(std::vector<Student> const& s, Mode m,
-                            std::vector<Student>& varg, std::vector<Student>& kiet);
-void padalinimasStrategija3(std::list<Student>& s, Mode m,
-                            std::list<Student>& varg, std::list<Student>& kiet);
-
+std::vector<Student> skaityti_studentus(const std::string& path);
+void spausdinti_lentele(const std::vector<Student>& s, Mode m);
+void spausdinti_lentele_abus(const std::vector<Student>& s);
+void padalinti_ir_irasyti(std::vector<Student>& s, Mode m);
+void padalinti_ir_irasyti(std::list<Student>& s, Mode m);
+std::vector<Student> skaityti_rezultatus(const std::string& path);
 
